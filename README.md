@@ -1,18 +1,28 @@
-## Getting Started
+## Rebel Alliance: Galactic Revolt
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Rebel Alliance: Galactic Revolt	is a thrilling space shooter that takes players back to the the golden era of arcade games. This game, takes its design inspiration from old-school videogames like Galaga and it delivers a nostalgic yet fresh experience. In this game while facing waves of increasingly difficult and proficient competitors, players can gather power-ups to strengthen their weaponry and defenses.
 
-## Folder Structure
+## Features
 
-The workspace contains two folders by default, where:
+Classic gaming Experience: Play games that are inspired of classic arcade shooters from the past.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+Amazing Graphics: Witness vivid, retro-styled visuals that breathe life into the  outer space combat.
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+Tough Rivals: Take on opponents that are harder to because of their quicker wingspans and more complex attacking patterns.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+Power-Ups: Gather a variety of power-ups to improve your shooting and defense skills.
 
-## Dependency Management
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+## Development Team
+
+Nidhish Shah
+
+Chase Brown
+
+Mark Georgi
+
+Ronel Kakos
+
+Lucas Hermiz
+
+Rachel Michil
