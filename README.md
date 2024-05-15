@@ -15,11 +15,11 @@ Rebel Alliance: Galactic Revolt	is a thrilling space shooter that takes players 
 
 ## Development Team
 
-•	Mark Georgi - Scrum Master
+•	Chase Brown - Scrum Master
 
 •	Nidhish Shah - Developer
 
-•	Chase Brown - Developer
+•	Mark Georgi - Developer
 
 •	Rachel Michil - Developer
 
