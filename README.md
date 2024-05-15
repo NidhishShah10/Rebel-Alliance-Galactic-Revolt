@@ -4,25 +4,26 @@ Rebel Alliance: Galactic Revolt	is a thrilling space shooter that takes players 
 
 ## Features
 
-Classic gaming Experience: Play games that are inspired of classic arcade shooters from the past.
+• Classic gaming Experience: Play games that are inspired of classic arcade shooters from the past.
 
-Amazing Graphics: Witness vivid, retro-styled visuals that breathe life into the  outer space combat.
+• Amazing Graphics: Witness vivid, retro-styled visuals that breathe life into the  outer space combat.
 
-Tough Rivals: Take on opponents that are harder to because of their quicker wingspans and more complex attacking patterns.
+• Tough Rivals: Take on opponents that are harder to because of their quicker wingspans and more complex attacking patterns.
 
-Power-Ups: Gather a variety of power-ups to improve your shooting and defense skills.
+• Power-Ups: Gather a variety of power-ups to improve your shooting and defense skills.
 
 
 ## Development Team
 
-Nidhish Shah
+•	Nidhish Shah - Developer
 
-Chase Brown
+•	Chase Brown - Developer
 
-Mark Georgi
+•	Rachel Michil - Developer
 
-Ronel Kakos
+•	Mark Georgi - Developer
 
-Lucas Hermiz
+•	Ronel Kakos - Developer
 
-Rachel Michil
+•	Lucas Hermiz - Testing Engineer
+
