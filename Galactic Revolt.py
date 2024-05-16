@@ -21,7 +21,7 @@ PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
 
 # Player speed
-PLAYER_SPEED = 20  # Increased speed for a Galaga-like feel
+PLAYER_SPEED = 20  
 
 # Bullet color and speed
 BULLET_COLOR = (255, 255, 255)  # White color
