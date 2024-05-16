@@ -2,7 +2,6 @@ import pygame
 import time
 import random
 
-# Initialize pygame
 pygame.font.init()
 pygame.init()
 
