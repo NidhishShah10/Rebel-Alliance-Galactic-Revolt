@@ -71,6 +71,11 @@ def menu():
     options_button = Button(400, 550, 400, 100, "Options", (0, 0, 255), (0, 0, 200))
     quit_button = Button(400, 700, 400, 100, "Quit", (255, 0, 0), (200, 0, 0))
 
+    font = pygame.font.SysFont("comicsans", 50)
+    message = font.render("Welcome to Galactic Revolt", True, (255, 255, 255))
+    message_rect = message.get_rect(center=(SCREEN_WIDTH // 2, 100))
+    Screen.blit(message, message_rect)
+
     buttons = [start_button, options_button, quit_button]
 
     while True:
