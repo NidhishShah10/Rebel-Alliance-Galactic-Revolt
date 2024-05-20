@@ -73,7 +73,7 @@ def menu():
 
     font = pygame.font.SysFont("comicsans", 50)
     message = font.render("Welcome to Galactic Revolt", True, (255, 255, 255))
-    message_rect = message.get_rect(center=(SCREEN_WIDTH // 2, 100))
+    message_rect = message.get_rect(center=(SCREEN_WIDTH // 2, 300))
     Screen.blit(message, message_rect)
 
     buttons = [start_button, options_button, quit_button]
