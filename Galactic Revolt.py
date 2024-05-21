@@ -31,6 +31,32 @@ BULLET_SPEED = 20
 # Font settings
 FONT = pygame.font.SysFont("comicsans", 30)
 
+#Basic enemies that move in a straight line
+class BasicEnemy:
+    def __init__(self, x, y, speed):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.image = pygame.transform.scale(pygame.image.load("BasicEnemy.png"), (50, 50))  # Load and scale enemy image
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+    def move(self):
+        self.y += self.speed
+        self.rect.y = self.y
+
+    def draw(self, screen):
+        screen.blit(self.image, (self.x, self.y))
+
+def create_basic_enemy():
+    x = random.randint(0, SCREEN_WIDTH - 50)
+    y = -50
+    speed = random.randint(2, 5)
+    return BasicEnemy(x, y, speed)
+
+enemies = []
+
 # Define buttons
 class Button:
     
@@ -116,8 +142,6 @@ def draw(player, bullets, elapsed_time):
     
     for bullet in bullets:
         pygame.draw.circle(Screen, BULLET_COLOR, (bullet[0], bullet[1]), BULLET_RADIUS)
-    
-    pygame.display.update()
 
 # Create bullets
 def handle_bullets(bullets):
@@ -125,6 +149,13 @@ def handle_bullets(bullets):
         bullet[1] -= BULLET_SPEED
         if bullet[1] < 0:
             bullets.remove(bullet)
+        else:
+            #this lets us kill enemies with bullets
+            for enemy in enemies[:]:
+                if pygame.Rect(bullet[0], bullet[1], BULLET_RADIUS, BULLET_RADIUS).colliderect(enemy.rect):
+                    bullets.remove(bullet)
+                    enemies.remove(enemy)
+                    break
 
 
 def main():
@@ -143,6 +174,10 @@ def main():
         clock.tick(60)
         elapsed_time = time.time() - start_time
         
+        # adds basic enemies at a random interval
+        if random.randint(1, 20) == 1:
+            enemies.append(create_basic_enemy())
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -164,6 +199,13 @@ def main():
             
         handle_bullets(bullets)
         draw(player, bullets, elapsed_time)
+
+        # moves enemies and draws them
+        for enemy in enemies:
+            enemy.move()
+            enemy.draw(Screen)
+
+        pygame.display.update() #placed the update for display after enemies move
             
     pygame.quit()
     
