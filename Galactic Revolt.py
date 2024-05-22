@@ -12,7 +12,7 @@ Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Galactic Revolt")
 
 # Load background images
-GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
+GAME_BG = pygame.transform.scale(pygame.image.load("space2.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Load player image and get its dimensions
