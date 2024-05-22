@@ -10,9 +10,10 @@ SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 1000
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Galactic Revolt")
+score = 0
 
 # Load background images
-GAME_BG = pygame.transform.scale(pygame.image.load("space2.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
+GAME_BG = pygame.transform.scale(pygame.image.load("space4.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Load player image and get its dimensions
@@ -57,11 +58,12 @@ def create_basic_enemy():
 
 enemies = []
 
+
 # Define buttons
 class Button:
     
     # Button attributes
-    def __init__(self, x, y, width, height, text, color, hover_color):
+    def __init__(self, x, y, width, height, text, color, hover_color, original_color):
         self.x = x
         self.y = y
         self.width = width
@@ -69,6 +71,7 @@ class Button:
         self.text = text
         self.color = color
         self.hover_color = hover_color
+        self.original_color = original_color
 
     # Customize buttons
     def draw(self, screen, outline=None):
@@ -86,23 +89,25 @@ class Button:
     def is_over(self, pos):
         if pos[0] > self.x and pos[0] < self.x + self.width:
             if pos[1] > self.y and pos[1] < self.y + self.height:
+                self.color = self.hover_color  # Set to hover color when over the button
                 return True
+        self.color = self.original_color  # Set to original color when not over the button
         return False
 
 # Main menu
 def menu():
     Screen.blit(MENU_BG, (0,0))
 
-    start_button = Button(400, 400, 400, 100, "Start", (0, 255, 0), (0, 200, 0))
-    options_button = Button(400, 550, 400, 100, "Options", (0, 0, 255), (0, 0, 200))
-    quit_button = Button(400, 700, 400, 100, "Quit", (255, 0, 0), (200, 0, 0))
+    start_button = Button(400, 400, 400, 100, "Start", (0, 255, 0), (0, 200, 0), (0, 255, 0))
+    settings_button = Button(400, 550, 400, 100, "Settings", (0, 0, 255), (0, 0, 200), (0, 0, 255))
+    quit_button = Button(400, 700, 400, 100, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
 
     font = pygame.font.SysFont("comicsans", 50)
     message = font.render("Welcome to Galactic Revolt", True, (255, 255, 255))
     message_rect = message.get_rect(center=(SCREEN_WIDTH // 2, 300))
     Screen.blit(message, message_rect)
 
-    buttons = [start_button, options_button, quit_button]
+    buttons = [start_button, settings_button, quit_button]
 
     while True:
         for event in pygame.event.get():
@@ -114,14 +119,15 @@ def menu():
                 for button in buttons:
                     if button.is_over(pygame.mouse.get_pos()):
                         button.color = button.hover_color
-                    else:
-                        button.color = (0, 255, 0) if button.text == "Start" else (255, 0, 0)
+                        settings_button = (0, 0, 200)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for button in buttons:
                     if button.is_over(pygame.mouse.get_pos()):
                         if button.text == "Start":
                             return
+                        if button.text == "Settings":
+                            print("Settings button clicked")
                         elif button.text == "Quit":
                             pygame.quit()
                             quit()
@@ -142,9 +148,14 @@ def draw(player, bullets, elapsed_time):
     
     for bullet in bullets:
         pygame.draw.circle(Screen, BULLET_COLOR, (bullet[0], bullet[1]), BULLET_RADIUS)
+        
+def draw_score():
+    score_text = FONT.render(f"Score: {score}", True, (255, 255, 255))
+    Screen.blit(score_text, (10, 40))
 
 # Create bullets
 def handle_bullets(bullets):
+    global score
     for bullet in bullets[:]:
         bullet[1] -= BULLET_SPEED
         if bullet[1] < 0:
@@ -155,8 +166,8 @@ def handle_bullets(bullets):
                 if pygame.Rect(bullet[0], bullet[1], BULLET_RADIUS, BULLET_RADIUS).colliderect(enemy.rect):
                     bullets.remove(bullet)
                     enemies.remove(enemy)
+                    score += 1
                     break
-
 
 def main():
     menu()
@@ -199,6 +210,7 @@ def main():
             
         handle_bullets(bullets)
         draw(player, bullets, elapsed_time)
+        draw_score()
 
         # moves enemies and draws them
         for enemy in enemies:
