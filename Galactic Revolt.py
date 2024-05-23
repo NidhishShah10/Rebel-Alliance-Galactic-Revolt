@@ -53,10 +53,11 @@ class BasicEnemy:
 def create_basic_enemy():
     x = random.randint(0, SCREEN_WIDTH - 50)
     y = -50
-    speed = random.randint(1, 4)
+    speed = random.randint(1, 2)
     return BasicEnemy(x, y, speed)
 
 enemies = []
+
 
 # Define buttons
 class Button:
@@ -181,23 +182,21 @@ def main():
     clock = pygame.time.Clock()  
     start_time = time.time()
     elapsed_time = 0
-    
-    enemy_spawn_interval = 10000  # Initial interval in milliseconds for enemy spawn, 10 seconds initially
-    last_enemy_spawn_time = pygame.time.get_ticks()
-    
+    time_since_last_basic_spawn = 0
+
     while run:
         clock.tick(60)
         elapsed_time = time.time() - start_time
         
-        # Decrease interval every 10 seconds the game goes on
-        if elapsed_time // 10 > (elapsed_time - clock.get_time()) // 10:
-            enemy_spawn_interval = max(200, enemy_spawn_interval - 100)  #dont let enemies spawn more than once every 200 miliseconds
-        
-        current_time = pygame.time.get_ticks()
-    
-        if current_time - last_enemy_spawn_time >= enemy_spawn_interval:
+        interval_for_enemy_spawn = 50
+
+        if elapsed_time - time_since_last_basic_spawn > 10:
+            interval_for_enemy_spawn = max(10, interval_for_enemy_spawn - 10)
+
+        # adds basic enemies at a random interval
+        if random.randint(1, interval_for_enemy_spawn) == 1:
             enemies.append(create_basic_enemy())
-            last_enemy_spawn_time = current_time
+            time_since_last_basic_spawn = time.time()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -221,7 +220,6 @@ def main():
         handle_bullets(bullets)
         draw(player, bullets, elapsed_time)
         draw_score()
-        
         # Check if player died
         for enemy in enemies:
             enemy.move()
@@ -237,11 +235,14 @@ def main():
                     bullets.clear()
                     start_time = time.time()
 
+        # Moves enemies and draws them
+        for enemy in enemies:
+            enemy.move()
+            enemy.draw(Screen)
         # Display lives
         lives_text = FONT.render(f"Lives: {lives}", True, (255, 255, 255))
         Screen.blit(lives_text, (SCREEN_WIDTH - 150, 10))
-        
-        pygame.display.update()  # placed the update for display after enemies move
+        pygame.display.update()  # Placed the update for display after enemies move
     pygame.quit()
     
 if __name__ == "__main__":
