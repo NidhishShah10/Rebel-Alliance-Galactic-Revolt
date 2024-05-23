@@ -32,7 +32,7 @@ BULLET_SPEED = 20
 # Font settings
 FONT = pygame.font.SysFont("comicsans", 30)
 
-#Basic enemies that move in a straight line
+# Basic enemies that move in a straight line
 class BasicEnemy:
     def __init__(self, x, y, speed):
         self.x = x
@@ -53,11 +53,10 @@ class BasicEnemy:
 def create_basic_enemy():
     x = random.randint(0, SCREEN_WIDTH - 50)
     y = -50
-    speed = random.randint(2, 5)
+    speed = random.randint(1, 4)
     return BasicEnemy(x, y, speed)
 
 enemies = []
-
 
 # Define buttons
 class Button:
@@ -137,7 +136,7 @@ def menu():
 
         pygame.display.update()
 
-# Place player, bullers, and timer on screen
+# Place player, bullets, and timer on screen
 def draw(player, bullets, elapsed_time):
     Screen.blit(GAME_BG, (0, 0))
     
@@ -178,18 +177,27 @@ def main():
     bullets = []
     global score
     global lives
-    lives=3
+    lives = 3
     clock = pygame.time.Clock()  
     start_time = time.time()
     elapsed_time = 0
+    
+    enemy_spawn_interval = 10000  # Initial interval in milliseconds for enemy spawn, 10 seconds initially
+    last_enemy_spawn_time = pygame.time.get_ticks()
     
     while run:
         clock.tick(60)
         elapsed_time = time.time() - start_time
         
-        # adds basic enemies at a random interval
-        if random.randint(1, 20) == 1:
+        # Decrease interval every 10 seconds the game goes on
+        if elapsed_time // 10 > (elapsed_time - clock.get_time()) // 10:
+            enemy_spawn_interval = max(200, enemy_spawn_interval - 100)  #dont let enemies spawn more than once every 200 miliseconds
+        
+        current_time = pygame.time.get_ticks()
+    
+        if current_time - last_enemy_spawn_time >= enemy_spawn_interval:
             enemies.append(create_basic_enemy())
+            last_enemy_spawn_time = current_time
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -213,7 +221,8 @@ def main():
         handle_bullets(bullets)
         draw(player, bullets, elapsed_time)
         draw_score()
-        # - Check if player died
+        
+        # Check if player died
         for enemy in enemies:
             enemy.move()
             enemy.draw(Screen)
@@ -228,13 +237,10 @@ def main():
                     bullets.clear()
                     start_time = time.time()
 
-        # moves enemies and draws them
-        for enemy in enemies:
-            enemy.move()
-            enemy.draw(Screen)
-        #Display lives
+        # Display lives
         lives_text = FONT.render(f"Lives: {lives}", True, (255, 255, 255))
         Screen.blit(lives_text, (SCREEN_WIDTH - 150, 10))
+        
         pygame.display.update()  # placed the update for display after enemies move
     pygame.quit()
     
