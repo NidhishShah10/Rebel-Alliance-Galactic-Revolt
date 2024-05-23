@@ -176,7 +176,9 @@ def main():
     
     player = pygame.Rect(SCREEN_WIDTH // 2 - PLAYER_WIDTH // 2, SCREEN_HEIGHT - PLAYER_HEIGHT - 20, PLAYER_WIDTH, PLAYER_HEIGHT)  # Start at center bottom
     bullets = []
-    
+    global score
+    global lives
+    lives=3
     clock = pygame.time.Clock()  
     start_time = time.time()
     elapsed_time = 0
@@ -211,14 +213,29 @@ def main():
         handle_bullets(bullets)
         draw(player, bullets, elapsed_time)
         draw_score()
+        # - Check if player died
+        for enemy in enemies:
+            enemy.move()
+            enemy.draw(Screen)
+            if player.colliderect(enemy.rect):
+                lives -= 1
+                enemies.remove(enemy)
+                if lives == 0:
+                    menu()
+                    lives = 3
+                    score = 0
+                    enemies.clear()
+                    bullets.clear()
+                    start_time = time.time()
 
         # moves enemies and draws them
         for enemy in enemies:
             enemy.move()
             enemy.draw(Screen)
-
-        pygame.display.update() #placed the update for display after enemies move
-            
+        #Display lives
+        lives_text = FONT.render(f"Lives: {lives}", True, (255, 255, 255))
+        Screen.blit(lives_text, (SCREEN_WIDTH - 150, 10))
+        pygame.display.update()  # placed the update for display after enemies move
     pygame.quit()
     
 if __name__ == "__main__":
