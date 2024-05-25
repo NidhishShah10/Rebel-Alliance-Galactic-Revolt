@@ -5,13 +5,13 @@ import random
 pygame.font.init()
 pygame.init()
 
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 1000
-Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+SCREEN_WIDTH = 1600
+SCREEN_HEIGHT = 1400
+Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Galactic Revolt")
 score = 0
 
-GAME_BG = pygame.transform.scale(pygame.image.load("space3.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
+GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 
@@ -95,13 +95,13 @@ class Button:
 def menu():
     Screen.blit(MENU_BG, (0,0))
 
-    start_button = Button(400, 400, 400, 100, "Start", (0, 255, 0), (0, 200, 0), (0, 255, 0))
-    settings_button = Button(400, 550, 400, 100, "Settings", (0, 0, 255), (0, 0, 200), (0, 0, 255))
-    quit_button = Button(400, 700, 400, 100, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
+    start_button = Button(600, 400, 400, 100, "Start", (0, 255, 0), (0, 200, 0), (0, 255, 0))
+    settings_button = Button(600, 550, 400, 100, "Settings", (0, 0, 255), (0, 0, 200), (0, 0, 255))
+    quit_button = Button(600, 700, 400, 100, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
 
     font = pygame.font.SysFont("comicsans", 50)
     message = font.render("Welcome to Galactic Revolt", True, (255, 255, 255))
-    message_rect = message.get_rect(center=(SCREEN_WIDTH // 2, 300))
+    message_rect = message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 5))
     Screen.blit(message, message_rect)
 
     buttons = [start_button, settings_button, quit_button]
@@ -166,15 +166,31 @@ def handle_bullets(bullets):
                     score += 1
                     break
 
+# Displays message to player that they have been hit                
+def player_hit_message(message, duration):
+    font = pygame.font.SysFont("comicsans", 50)
+    text = font.render(message, True, (255,255,255))
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+    Screen.blit(text, text_rect)
+    pygame.display.update()
+    pygame.time.wait(duration * 1000)
+    
+def reset_game():
+    global enemies
+    player_hit_message("You have been hit!", 1)
+    enemies = []
+    
+
 def main():
     menu()
     
     run = True
     
-    player = pygame.Rect(SCREEN_WIDTH // 2 - PLAYER_WIDTH // 2, SCREEN_HEIGHT - PLAYER_HEIGHT - 20, PLAYER_WIDTH, PLAYER_HEIGHT)  # Start at center bottom
+    player = pygame.Rect((SCREEN_WIDTH - PLAYER_WIDTH) // 2, SCREEN_HEIGHT - PLAYER_HEIGHT - 275, PLAYER_WIDTH, PLAYER_HEIGHT)  # Start at center bottom
     bullets = []
     global score
     global lives
+    global enemies
     lives = 3
     clock = pygame.time.Clock()  
     start_time = time.time()
@@ -226,8 +242,9 @@ def main():
             enemy.move()
             enemy.draw(Screen)
             if player.colliderect(enemy.rect):
+                reset_game()
+                player = pygame.Rect((SCREEN_WIDTH - PLAYER_WIDTH) // 2, SCREEN_HEIGHT - PLAYER_HEIGHT - 275, PLAYER_WIDTH, PLAYER_HEIGHT)  # Start at center bottom
                 lives -= 1
-                enemies.remove(enemy)
                 if lives == 0:
                     menu()
                     lives = 3
@@ -242,7 +259,7 @@ def main():
             enemy.draw(Screen)
         # Display lives
         lives_text = FONT.render(f"Lives: {lives}", True, (255, 255, 255))
-        Screen.blit(lives_text, (SCREEN_WIDTH - 150, 10))
+        Screen.blit(lives_text, (SCREEN_WIDTH - 200, 10))
         pygame.display.update()  
     pygame.quit()
     
