@@ -5,40 +5,38 @@ import random
 pygame.font.init()
 pygame.init()
 
-# Screen dimensions
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 1000
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Galactic Revolt")
 score = 0
 
-# Load background images
-GAME_BG = pygame.transform.scale(pygame.image.load("space4.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
+GAME_BG = pygame.transform.scale(pygame.image.load("space3.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-# Load player image and get its dimensions
-PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (250, 100))  # Adjusted player ship size
+
+PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (250, 100))  
 PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
 
-# Player speed
+
 PLAYER_SPEED = 20  
 
-# Bullet color and speed
-BULLET_COLOR = (255, 255, 255)  # White color
+
+BULLET_COLOR = (255, 255, 255) 
 BULLET_RADIUS = 5
 BULLET_SPEED = 20
 
-# Font settings
+
 FONT = pygame.font.SysFont("comicsans", 30)
 
-# Basic enemies that move in a straight line
+
 class BasicEnemy:
     def __init__(self, x, y, speed):
         self.x = x
         self.y = y
         self.speed = speed
-        self.image = pygame.transform.scale(pygame.image.load("BasicEnemy.png"), (50, 50))  # Load and scale enemy image
+        self.image = pygame.transform.scale(pygame.image.load("BasicEnemy.png"), (50, 50))  
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
@@ -59,10 +57,9 @@ def create_basic_enemy():
 enemies = []
 
 
-# Define buttons
 class Button:
     
-    # Button attributes
+  
     def __init__(self, x, y, width, height, text, color, hover_color, original_color):
         self.x = x
         self.y = y
@@ -73,7 +70,7 @@ class Button:
         self.hover_color = hover_color
         self.original_color = original_color
 
-    # Customize buttons
+    
     def draw(self, screen, outline=None):
         if outline:
             pygame.draw.rect(screen, outline, (self.x-2, self.y-2, self.width+4, self.height+4), 0)
@@ -85,16 +82,16 @@ class Button:
             text = font.render(self.text, 1, (0, 0, 0))
             screen.blit(text, (self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
 
-    # Change button color if mouse is hovering
+
     def is_over(self, pos):
         if pos[0] > self.x and pos[0] < self.x + self.width:
             if pos[1] > self.y and pos[1] < self.y + self.height:
-                self.color = self.hover_color  # Set to hover color when over the button
+                self.color = self.hover_color  
                 return True
-        self.color = self.original_color  # Set to original color when not over the button
+        self.color = self.original_color  
         return False
 
-# Main menu
+
 def menu():
     Screen.blit(MENU_BG, (0,0))
 
@@ -137,7 +134,7 @@ def menu():
 
         pygame.display.update()
 
-# Place player, bullets, and timer on screen
+
 def draw(player, bullets, elapsed_time):
     Screen.blit(GAME_BG, (0, 0))
     
@@ -161,7 +158,7 @@ def handle_bullets(bullets):
         if bullet[1] < 0:
             bullets.remove(bullet)
         else:
-            #this lets us kill enemies with bullets
+            
             for enemy in enemies[:]:
                 if pygame.Rect(bullet[0], bullet[1], BULLET_RADIUS, BULLET_RADIUS).colliderect(enemy.rect):
                     bullets.remove(bullet)
@@ -193,7 +190,7 @@ def main():
         if elapsed_time - time_since_last_basic_spawn > 10:
             interval_for_enemy_spawn = max(10, interval_for_enemy_spawn - 10)
 
-        # adds basic enemies at a random interval
+        
         if random.randint(1, interval_for_enemy_spawn) == 1:
             enemies.append(create_basic_enemy())
             time_since_last_basic_spawn = time.time()
@@ -208,10 +205,14 @@ def main():
                     bullets.append(bullet)
         
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and player.x - PLAYER_SPEED >= 0:
+        if keys[pygame.K_LEFT]:
             player.x -= PLAYER_SPEED
-        if keys[pygame.K_RIGHT] and player.x + PLAYER_SPEED + player.width <= SCREEN_WIDTH:
+            if player.x < -PLAYER_WIDTH:  
+                player.x = SCREEN_WIDTH  
+        if keys[pygame.K_RIGHT]:
             player.x += PLAYER_SPEED
+            if player.x > SCREEN_WIDTH:  
+                player.x = -PLAYER_WIDTH  
         if keys[pygame.K_UP] and player.y - PLAYER_SPEED >= 0:
             player.y -= PLAYER_SPEED
         if keys[pygame.K_DOWN] and player.y + PLAYER_SPEED + player.height <= SCREEN_HEIGHT:
@@ -235,14 +236,14 @@ def main():
                     bullets.clear()
                     start_time = time.time()
 
-        # Moves enemies and draws them
+       
         for enemy in enemies:
             enemy.move()
             enemy.draw(Screen)
         # Display lives
         lives_text = FONT.render(f"Lives: {lives}", True, (255, 255, 255))
         Screen.blit(lives_text, (SCREEN_WIDTH - 150, 10))
-        pygame.display.update()  # Placed the update for display after enemies move
+        pygame.display.update()  
     pygame.quit()
     
 if __name__ == "__main__":
