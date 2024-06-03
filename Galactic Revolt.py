@@ -114,9 +114,9 @@ def menu():
 
             if event.type == pygame.MOUSEMOTION:
                 for button in buttons:
-                    if button.is_over(pygame.mouse.get_pos()):
-                        button.color = button.hover_color
-                        settings_button = (0, 0, 200)
+                    button.is_over(pygame.mouse.get_pos())
+                    button.color = button.hover_color
+                    settings_button = (0, 0, 200)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for button in buttons:
@@ -124,6 +124,7 @@ def menu():
                         if button.text == "Start":
                             return
                         if button.text == "Settings":
+                            settings_menu()
                             print("Settings button clicked")
                         elif button.text == "Quit":
                             pygame.quit()
@@ -134,6 +135,64 @@ def menu():
 
         pygame.display.update()
 
+class GameMode:
+    def __init__(self, name, spawn_rate):
+        self.name = name 
+        self.spawn_rate = spawn_rate
+
+# Defining game modes
+easy_mode = GameMode("Easy", 120)
+medium_mode = GameMode("Medium", 80)
+hard_mode = GameMode("Hard", 40)
+game_modes = [easy_mode, medium_mode, hard_mode]
+selected_mode = easy_mode
+
+def settings_menu():
+    Screen.fill((0, 0, 0))
+    back_button = Button(50, 50, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
+
+    mode_buttons = []
+    for i, mode in enumerate(game_modes):
+        if mode.name == "Easy":
+            color = (0, 255, 0)
+            hover_color = (0, 200, 0)
+        elif mode.name == "Medium":
+            color = (255, 255, 0)
+            hover_color = (200, 200, 0)
+        elif mode.name == "Hard":
+            color = (255, 0, 0)
+            hover_color = (200, 0, 0)
+        
+        button = Button(600, 300 + i * 100, 400, 80, mode.name, color, hover_color, color)
+        mode_buttons.append(button)
+
+    while True:
+        Screen.fill((0, 0, 0))  # Clear the screen before drawing buttons
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                
+            if event.type == pygame.MOUSEMOTION:
+                back_button.is_over(pygame.mouse.get_pos())
+                for button in mode_buttons:
+                    button.is_over(pygame.mouse.get_pos())
+                
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for button in mode_buttons:
+                    if button.is_over(pygame.mouse.get_pos()):
+                            global selected_mode
+                            selected_mode = next(mode for mode in game_modes if mode.name == button.text)
+                if back_button.is_over(pygame.mouse.get_pos()):  # Handle back button click
+                    menu()  # Go back to main menu
+                    return
+                
+            back_button.draw(Screen, (0, 0, 0))
+            for button in mode_buttons:
+                button.draw(Screen, (0, 0, 0))
+
+            pygame.display.update()
 
 def draw(player, bullets, elapsed_time):
     Screen.blit(GAME_BG, (0, 0))
@@ -207,7 +266,7 @@ def main():
             interval_for_enemy_spawn = max(10, interval_for_enemy_spawn - 10)
 
         
-        if random.randint(1, interval_for_enemy_spawn) == 1:
+        if random.randint(1, selected_mode.spawn_rate) == 1:
             enemies.append(create_basic_enemy())
             time_since_last_basic_spawn = time.time()
 
