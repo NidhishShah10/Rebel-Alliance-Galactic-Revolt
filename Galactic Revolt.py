@@ -91,7 +91,29 @@ class Button:
         self.color = self.original_color  
         return False
 
+def pause_menu():
+    resume_button = Button(SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 75, 400, 100, "Resume", (0, 255, 0), (0, 200, 0), (0, 255, 0))
+    quit_button = Button(SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 + 50, 400, 100, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
+    buttons = [resume_button, quit_button]
+    pause = True
 
+    while pause:
+        Screen.fill((0, 0, 0, 150), special_flags=pygame.BLEND_RGBA_MULT)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return 'quit'
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if resume_button.is_over(pos):
+                    pygame.time.wait(500)
+                    return 'resume'
+                elif quit_button.is_over(pos):
+                    return 'quit'
+
+        for button in buttons:
+            button.draw(Screen, (0, 0, 0))
+
+        pygame.display.update()
 def menu():
     Screen.blit(MENU_BG, (0,0))
 
@@ -225,7 +247,6 @@ def handle_bullets(bullets):
                     score += 1
                     break
 
-# Displays message to player that they have been hit                
 def player_hit_message(message, duration):
     font = pygame.font.SysFont("comicsans", 50)
     text = font.render(message, True, (255,255,255))
@@ -278,7 +299,12 @@ def main():
                 if event.key == pygame.K_SPACE:
                     bullet = [player.x + player.width // 2, player.y]
                     bullets.append(bullet)
-        
+
+                if event.key == pygame.K_p:
+                    action = pause_menu()
+                    if action == 'quit':
+                        run = False
+
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             player.x -= PLAYER_SPEED
@@ -319,7 +345,11 @@ def main():
         # Display lives
         lives_text = FONT.render(f"Lives: {lives}", True, (255, 255, 255))
         Screen.blit(lives_text, (SCREEN_WIDTH - 200, 10))
-        pygame.display.update()  
+        pygame.display.update()
+        if not run:
+            break
+
+
     pygame.quit()
     
 if __name__ == "__main__":
