@@ -15,6 +15,7 @@ score = 0
 # Load images and transform according to initial screen size
 GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
+SETTINGS_BG = pygame.transform.scale(pygame.image.load("Settings_background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (125, 50))
 PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
@@ -107,21 +108,16 @@ def pause_menu():
         pygame.display.update()
 
 def settings_menu():
-    global SCREEN_WIDTH, SCREEN_HEIGHT, Screen, GAME_BG, MENU_BG, PLAYER_IMAGE, PLAYER_WIDTH, PLAYER_HEIGHT
+    global Screen, SETTINGS_BG
 
-    Screen.fill((0, 0, 0))
+    Screen.blit(SETTINGS_BG, (0, 0))  # Use SETTINGS_BG as the background
+
     back_button = Button(50, 50, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
-
-    # Screen size buttons
-    screen_size_buttons = [
-        Button(SCREEN_WIDTH // 2 - 100, 200, 200, 50, "800x600", (0, 255, 255), (0, 200, 200), (0, 255, 255)),
-        Button(SCREEN_WIDTH // 2 - 100, 275, 200, 50, "1024x768", (0, 255, 255), (0, 200, 200), (0, 255, 255)),
-        Button(SCREEN_WIDTH // 2 - 100, 350, 200, 50, "1280x720", (0, 255, 255), (0, 200, 200), (0, 255, 255)),
-        Button(SCREEN_WIDTH // 2 - 100, 425, 200, 50, "1920x1080", (0, 255, 255), (0, 200, 200), (0, 255, 255))
-    ]
+    screen_size_button = Button(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 25, 300, 60, "Screen Size", (0, 255, 255), (0, 200, 200), (0, 255, 255))
+    game_controls_button = Button(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 50, 300, 60, "Game Controls", (0, 255, 255), (0, 200, 200), (0, 255, 255))
 
     while True:
-        Screen.fill((0, 0, 0))
+        Screen.blit(SETTINGS_BG, (0, 0))  # Refresh the background
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -130,6 +126,51 @@ def settings_menu():
 
             if event.type == pygame.MOUSEMOTION:
                 back_button.is_over(pygame.mouse.get_pos())
+                screen_size_button.is_over(pygame.mouse.get_pos())
+                game_controls_button.is_over(pygame.mouse.get_pos())
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if screen_size_button.is_over(pygame.mouse.get_pos()):
+                    screen_size_submenu()
+                    return
+                elif game_controls_button.is_over(pygame.mouse.get_pos()):
+                    game_controls_submenu()
+                    return
+                elif back_button.is_over(pygame.mouse.get_pos()):
+                    menu()
+                    return
+
+        back_button.draw(Screen, (0, 0, 0))
+        screen_size_button.draw(Screen, (0, 0, 0))
+        game_controls_button.draw(Screen, (0, 0, 0))
+
+        pygame.display.update()
+
+
+
+
+def screen_size_submenu():
+    global SCREEN_WIDTH, SCREEN_HEIGHT, Screen, GAME_BG, MENU_BG, PLAYER_IMAGE, PLAYER_WIDTH, PLAYER_HEIGHT, SETTINGS_BG
+
+    Screen.blit(SETTINGS_BG, (0,0))
+
+    # Screen size buttons
+    screen_size_buttons = [
+        Button(SCREEN_WIDTH // 2 - 100, 275, 200, 50, "800x600", (0, 255, 255), (0, 200, 200), (0, 255, 255)),
+        Button(SCREEN_WIDTH // 2 - 100, 350, 200, 50, "1024x768", (0, 255, 255), (0, 200, 200), (0, 255, 255)),
+        Button(SCREEN_WIDTH // 2 - 100, 425, 200, 50, "1280x720", (0, 255, 255), (0, 200, 200), (0, 255, 255)),
+        Button(SCREEN_WIDTH // 2 - 100, 500, 200, 50, "1920x1080", (0, 255, 255), (0, 200, 200), (0, 255, 255)),
+        Button(SCREEN_WIDTH // 2 - 100, 575, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
+    ]
+
+    while True:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.MOUSEMOTION:
                 for button in screen_size_buttons:
                     button.is_over(pygame.mouse.get_pos())
 
@@ -154,16 +195,17 @@ def settings_menu():
                         PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (125, 50))
                         PLAYER_WIDTH = PLAYER_IMAGE.get_width()
                         PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
-                
-                if back_button.is_over(pygame.mouse.get_pos()):
-                    menu()
-                    return
+                        settings_menu()
+                        return
+                    elif button.text == "Back":
+                        settings_menu()
+                        return
 
-            back_button.draw(Screen, (0, 0, 0))
-            for button in screen_size_buttons:
-                button.draw(Screen, (0, 0, 0))
+        for button in screen_size_buttons:
+            button.draw(Screen, (0, 0, 0))
 
-            pygame.display.update()
+        pygame.display.update()
+
 
 def menu():
     Screen.blit(MENU_BG, (0, 0))
