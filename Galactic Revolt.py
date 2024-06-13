@@ -86,7 +86,7 @@ class SnakeEnemy:
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
 
-def create_snake_enemy(_x = int):
+def create_snake_enemy(_x : int):
     x = _x
     y = 0
     speed = 2
