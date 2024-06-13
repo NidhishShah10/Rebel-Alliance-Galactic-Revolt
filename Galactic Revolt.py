@@ -50,6 +50,48 @@ def create_basic_enemy():
     speed = random.randint(1, 2)
     return BasicEnemy(x, y, speed)
 
+snake_enemy_img = pygame.image.load('fighter.png')
+class SnakeEnemy:
+    def __init__(self, x, y, speed, cooldown=50):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.original_image = pygame.transform.scale(snake_enemy_img, (50, 50))
+        self.image = self.original_image.copy()
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.direction = 1 
+        self.cooldown = cooldown
+        self.cooldown_timer = self.cooldown
+
+    def move(self):
+        if self.cooldown_timer > 0:
+            self.cooldown_timer -= 1
+
+        self.x += self.speed * self.direction
+        if (self.rect.right >= SCREEN_WIDTH or self.rect.left <= 0) and self.cooldown_timer == 0:
+            self.direction *= -1
+            self.y += self.height
+            self.cooldown_timer = self.cooldown
+
+        if self.direction == 1:
+            self.image = pygame.transform.rotate(self.original_image, 0)
+        else:
+            self.image = pygame.transform.rotate(self.original_image, 180)
+
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+    def draw(self, screen):
+        screen.blit(self.image, (self.x, self.y))
+
+def create_snake_enemy(_x = int):
+    x = _x
+    y = 0
+    speed = 2
+    return SnakeEnemy(x, y, speed)
+
 enemies = []
 
 class Button:
@@ -364,20 +406,20 @@ def main():
     clock = pygame.time.Clock()  
     start_time = time.time()
     elapsed_time = 0
-    time_since_last_basic_spawn = 0
+    time_for_snakes = False
 
     while run:
         clock.tick(60)
         elapsed_time = time.time() - start_time
 
-        interval_for_enemy_spawn = 50
-
-        if elapsed_time - time_since_last_basic_spawn > 10:
-            interval_for_enemy_spawn = max(10, interval_for_enemy_spawn - 10)
-
         if random.randint(1, selected_mode.spawn_rate) == 1:
             enemies.append(create_basic_enemy())
-            time_since_last_basic_spawn = time.time()
+
+        if time_for_snakes or time.time() - start_time >= 5:
+            time_for_snakes = True
+            if random.randint(1, selected_mode.spawn_rate) == 1:
+                for i in (-2, -1, 0):
+                    enemies.append(create_snake_enemy(i * 25))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
