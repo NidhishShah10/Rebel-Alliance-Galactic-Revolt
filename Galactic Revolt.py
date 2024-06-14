@@ -16,7 +16,7 @@ score = 0
 GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 SETTINGS_BG = pygame.transform.scale(pygame.image.load("Settings_background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
-PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (125, 50))
+PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (40, 40))
 PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
 
@@ -234,7 +234,7 @@ def screen_size_submenu():
                         Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
                         GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
                         MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
-                        PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (125, 50))
+                        PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (40, 40))
                         PLAYER_WIDTH = PLAYER_IMAGE.get_width()
                         PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
                         settings_menu()
