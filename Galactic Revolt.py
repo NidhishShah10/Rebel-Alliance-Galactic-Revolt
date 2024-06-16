@@ -1,6 +1,7 @@
 import pygame
 import time
 import random
+import sys
 
 pygame.font.init()
 pygame.init()
@@ -8,7 +9,7 @@ pygame.init()
 # Default screen size
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), (pygame.SRCALPHA))
 pygame.display.set_caption("Galactic Revolt")
 score = 0
 
@@ -26,6 +27,7 @@ BULLET_RADIUS = 5
 BULLET_SPEED = 10
 
 FONT = pygame.font.SysFont("comicsans", 20)
+LARGE_FONT = pygame.font.SysFont("comicsans", 72)
 
 class BasicEnemy:
     def __init__(self, x, y, speed):
@@ -124,23 +126,56 @@ class Button:
                 return True
         self.color = self.original_color
         return False
+    
+def draw_game():
+    global enemies
+    Screen.blit(GAME_BG, (0, 0))
+ 
+    for enemy in enemies:
+        enemy.draw(Screen)
+        
+    # Display score
+    score_text = FONT.render(f"Score: {score}", True, (255, 255, 255))
+    
+    Screen.blit(score_text, (10, 10))
+    
+def countdown_timer(seconds):
+    for i in range(seconds, 0, -1):
+        Screen.blit(GAME_BG, (0, 0))  # Redraw game background
+        draw_game()  # Draw the game elements
+        countdown_text = LARGE_FONT.render(str(i), True, (255, 255, 255))
+        text_rect = countdown_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        Screen.blit(countdown_text, text_rect)
+        pygame.display.update()
+        time.sleep(1)
 
 def pause_menu():
-    resume_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 37, 200, 50, "Resume", (0, 255, 0), (0, 200, 0), (0, 255, 0))
-    quit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 25, 200, 50, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
-    buttons = [resume_button, quit_button]
+    resume_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 87, 200, 50, "Resume", (0, 255, 0), (0, 200, 0), (0, 255, 0))
+    restart_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 25, 200, 50, "Restart", (255, 255, 0), (200, 200, 0), (255, 255, 0))
+    quit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 37, 200, 50, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
+    buttons = [resume_button, restart_button, quit_button]
     pause = True
 
     while pause:
-        Screen.fill((0, 0, 0, 150), special_flags=pygame.BLEND_RGBA_MULT)
+        draw_game() 
+
+        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 150)) 
+        Screen.blit(overlay, (0, 0))
+
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return 'quit'
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 if resume_button.is_over(pos):
-                    pygame.time.wait(500)
+                    pause = False
+                    countdown_timer(3)
                     return 'resume'
+                elif restart_button.is_over(pos):
+                    return 'restart'
                 elif quit_button.is_over(pos):
                     return 'quit'
 
@@ -149,14 +184,19 @@ def pause_menu():
 
         pygame.display.update()
 
+
+
+        
 def settings_menu():
     global Screen, SETTINGS_BG
 
     Screen.blit(SETTINGS_BG, (0, 0))  # Use SETTINGS_BG as the background
 
     back_button = Button(50, 50, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
-    screen_size_button = Button(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 25, 300, 60, "Screen Size", (0, 255, 255), (0, 200, 200), (0, 255, 255))
-    game_controls_button = Button(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 50, 300, 60, "Game Controls", (0, 255, 255), (0, 200, 200), (0, 255, 255))
+    #screen_size_button = Button(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 125, 300, 60, "Change Screen Size", (0, 255, 255), (0, 200, 200), (0, 255, 255))
+    game_controls_button = Button(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 125, 300, 60, "Game Controls", (0, 255, 255), (0, 200, 200), (0, 255, 255))
+    credits_button = Button(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 50, 300, 60, "Credits", (0, 255, 255), (0, 200, 200), (0, 255, 255))
+    about_button = Button(SCREEN_WIDTH // 2 -150, SCREEN_HEIGHT // 2 + 25, 300, 60, "About", (0, 255, 255), (0, 200, 200), (0, 255, 255))
 
     while True:
         Screen.blit(SETTINGS_BG, (0, 0))  # Refresh the background
@@ -168,29 +208,36 @@ def settings_menu():
 
             if event.type == pygame.MOUSEMOTION:
                 back_button.is_over(pygame.mouse.get_pos())
-                screen_size_button.is_over(pygame.mouse.get_pos())
+                #screen_size_button.is_over(pygame.mouse.get_pos())
                 game_controls_button.is_over(pygame.mouse.get_pos())
+                credits_button.is_over(pygame.mouse.get_pos())
+                about_button.is_over(pygame.mouse.get_pos())
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if screen_size_button.is_over(pygame.mouse.get_pos()):
-                    screen_size_submenu()
-                    return
-                elif game_controls_button.is_over(pygame.mouse.get_pos()):
+                #if screen_size_button.is_over(pygame.mouse.get_pos()):
+                #    screen_size_submenu()
+                #    return
+                if game_controls_button.is_over(pygame.mouse.get_pos()):
                     game_controls_submenu()
+                    return
+                elif credits_button.is_over(pygame.mouse.get_pos()):
+                    credits_submenu()
+                    return
+                elif about_button.is_over(pygame.mouse.get_pos()):
+                    about_submenu()
                     return
                 elif back_button.is_over(pygame.mouse.get_pos()):
                     menu()
                     return
 
         back_button.draw(Screen, (0, 0, 0))
-        screen_size_button.draw(Screen, (0, 0, 0))
+        #screen_size_button.draw(Screen, (0, 0, 0))
         game_controls_button.draw(Screen, (0, 0, 0))
+        credits_button.draw(Screen, (0, 0, 0))
+        about_button.draw(Screen, (0, 0, 0))
 
         pygame.display.update()
-
-
-
-
+        
 def screen_size_submenu():
     global SCREEN_WIDTH, SCREEN_HEIGHT, Screen, GAME_BG, MENU_BG, PLAYER_IMAGE, PLAYER_WIDTH, PLAYER_HEIGHT, SETTINGS_BG
 
@@ -247,13 +294,180 @@ def screen_size_submenu():
             button.draw(Screen, (0, 0, 0))
 
         pygame.display.update()
+        
+def game_controls_submenu():
+    global SCREEN_WIDTH, SCREEN_HEIGHT, Screen, GAME_BG, MENU_BG, PLAYER_IMAGE, PLAYER_WIDTH, PLAYER_HEIGHT, SETTINGS_BG
+
+    Screen.blit(SETTINGS_BG, (0,0))
+    back_button = Button(50, 50, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
+
+    while True:
+        
+        font = pygame.font.SysFont("Comicsans", 30)
+
+        up_message = font.render("Up arrow - Move the player up", True, (255, 255, 255))
+        down_message = font.render("Down arrow - Move the player down", True, (255, 255, 255))
+        right_message = font.render("Right arrow - Move the player to the right", True, (255, 255, 255))
+        left_message = font.render("Left arrow - Move the player to the left", True, (255, 255, 255))
+        shoot_message = font.render("Space bar - Shoot bullets at the enemies", True, (255, 255, 255))
+        pause_message = font.render('"P" key - Pause the game', True, (255, 255, 255))
+        
+        up_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 125))
+        down_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 75))
+        right_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 25))
+        left_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 25))
+        shoot_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 75))
+        pause_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 125 ))
+
+        Screen.blit(up_message, up_message_rect)
+        Screen.blit(down_message, down_message_rect)
+        Screen.blit(right_message, right_message_rect)
+        Screen.blit(left_message, left_message_rect)
+        Screen.blit(shoot_message, shoot_message_rect)
+        Screen.blit(pause_message, pause_message_rect)
+        
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+                if event.type == pygame.MOUSEMOTION:
+                    back_button.is_over(pygame.mouse.get_pos())
+                    
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    back_button.is_over(pygame.mouse.get_pos())
+                    settings_menu()
+                    return
+
+                
+        back_button.draw(Screen, (0, 0, 0))
+
+        
+        pygame.display.update()
+
+def credits_submenu():
+    global SCREEN_WIDTH, SCREEN_HEIGHT, Screen, GAME_BG, MENU_BG, PLAYER_IMAGE, PLAYER_WIDTH, PLAYER_HEIGHT, SETTINGS_BG
+
+    Screen.blit(SETTINGS_BG, (0, 0))
+    back_button = Button(50, 50, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
+    
+    while True:
+        font = pygame.font.SysFont("Comicsans", 30)
+        chase_message = font.render("Chase Brown - Scrum master", True, (255, 255, 255))
+        mark_message = font.render("Mark Georgi - Developer", True, (255, 255, 255))
+        nidhish_message = font.render("Nidhish Shah - Developer", True, (255, 255, 255))
+        ronel_message = font.render("Ronel Kakos - Developer", True, (255, 255, 255))
+        lucas_message = font.render("Lucas Hermiz - Developer/Tester", True, (255, 255, 255))
+        rachel_message = font.render("Rachel Michil - Developer", True, (255, 255, 255))
+        
+        chase_message_rect = chase_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 125))
+        mark_message_rect = mark_message.get_rect(center=(SCREEN_WIDTH // 2 - 175, SCREEN_HEIGHT // 2 - 75))
+        nidhish_message_rect = nidhish_message.get_rect(center=(SCREEN_WIDTH // 2 - 170, SCREEN_HEIGHT // 2 - 25))
+        ronel_message_rect = ronel_message.get_rect(center=(SCREEN_WIDTH // 2 - 175, SCREEN_HEIGHT // 2 + 25))
+        lucas_message_rect = lucas_message.get_rect(center=(SCREEN_WIDTH // 2 - 115, SCREEN_HEIGHT // 2 + 75))
+        rachel_message_rect = rachel_message.get_rect(center=(SCREEN_WIDTH // 2 - 175, SCREEN_HEIGHT // 2 + 125 ))
+        
+        Screen.blit(chase_message, chase_message_rect)
+        Screen.blit(mark_message,mark_message_rect)
+        Screen.blit(nidhish_message, nidhish_message_rect)
+        Screen.blit(ronel_message, ronel_message_rect)
+        Screen.blit(lucas_message, lucas_message_rect)
+        Screen.blit(rachel_message, rachel_message_rect)
+        
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+                if event.type == pygame.MOUSEMOTION:
+                    back_button.is_over(pygame.mouse.get_pos())
+                    
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    back_button.is_over(pygame.mouse.get_pos())
+                    settings_menu()
+                    return
+
+                
+        back_button.draw(Screen, (0, 0, 0))
+
+        
+        pygame.display.update()
+        
+def draw_text(surface, text, color, rect, font, aa=False, bkg=None):
+    rect = pygame.Rect(rect)
+    y = rect.top
+    line_spacing = -2
+
+    # Get the height of the font
+    font_height = font.size("Tg")[1]
+
+    while text:
+        i = 1
+
+        # Determine maximum width of line
+        while font.size(text[:i])[0] < rect.width and i < len(text):
+            i += 1
+
+        # If we've wrapped the text, then adjust the wrap to the last word
+        if i < len(text):
+            i = text.rfind(" ", 0, i) + 1
+
+        # Render the line and blit it to the surface
+        if bkg:
+            image = font.render(text[:i], 1, color, bkg)
+            image.set_colorkey(bkg)
+        else:
+            image = font.render(text[:i], aa, color)
+
+        surface.blit(image, (rect.left, y))
+        y += font_height + line_spacing
+
+        # Remove the text we just blitted
+        text = text[i:]
+
+    return text
+
+def about_submenu():
+    global SCREEN_WIDTH, SCREEN_HEIGHT, Screen, GAME_BG, MENU_BG, PLAYER_IMAGE, PLAYER_WIDTH, PLAYER_HEIGHT, SETTINGS_BG
+
+    Screen.blit(SETTINGS_BG, (0, 0))
+    back_button = Button(50, 50, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
+    
+    font = pygame.font.SysFont("Comicsans", 20)
+    about_message = ("Rebel Alliance: Galactic Revolt is a thrilling space shooter that takes players back to "
+                     "the golden era of arcade games. Engage in intense space battles, dodge incoming fire, "
+                     "and take down enemy ships to save the galaxy. This game, takes its design inspiration"
+                     "from old-school videogames like Galaga and it delivers a nostalgic yet fresh experience"
+                     "In this game while facing waves of increasingly difficult and proficient competitors,"
+                     "players can gather power-ups to strengthen their weaponry and defenses.")
+
+    while True:
+        Screen.blit(SETTINGS_BG, (0, 0))
+
+        draw_text(Screen, about_message, (255, 255, 255), pygame.Rect(SCREEN_WIDTH // 2 - 300, SCREEN_HEIGHT // 2 - 125, 500, 150), font)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.MOUSEMOTION:
+                back_button.is_over(pygame.mouse.get_pos())
+                
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button.is_over(pygame.mouse.get_pos()):
+                    settings_menu()
+                    return
+
+        back_button.draw(Screen, (0, 0, 0))
+        pygame.display.update()
 
 
 def menu():
     Screen.blit(MENU_BG, (0, 0))
 
     start_button = Button(300, 200, 200, 50, "Start", (0, 255, 0), (0, 200, 0), (0, 255, 0))
-    settings_button = Button(300, 275, 200, 50, "Settings", (0, 0, 255), (0, 0, 200), (0, 0, 255))
+    settings_button = Button(300, 275, 200, 50, "More", (0, 0, 255), (0, 0, 200), (0, 0, 255))
     quit_button = Button(300, 350, 200, 50, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
 
     font = pygame.font.SysFont("comicsans", 30)
@@ -280,7 +494,7 @@ def menu():
                         if button.text == "Start":
                             difficulty_menu()
                             return
-                        elif button.text == "Settings":
+                        elif button.text == "More":
                             settings_menu()
                             return
                         elif button.text == "Quit":
@@ -433,7 +647,12 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     action = pause_menu()
                     if action == 'quit':
-                        run = False
+                        menu()
+                    if action == 'restart':
+                        main()
+                        return
+                    elif action == 'resume':
+                        pass
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -479,6 +698,8 @@ def main():
             break
 
     pygame.quit()
+    
+
 
 if __name__ == "__main__":
     menu()
