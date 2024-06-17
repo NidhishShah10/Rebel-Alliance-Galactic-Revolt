@@ -17,6 +17,7 @@ score = 0
 GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 SETTINGS_BG = pygame.transform.scale(pygame.image.load("Settings_background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
+DIFFICULTY_BG = pygame.transform.scale(pygame.image.load("Difficulty_Background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (40, 40))
 PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
@@ -27,7 +28,7 @@ BULLET_RADIUS = 5
 BULLET_SPEED = 10
 
 FONT = pygame.font.SysFont("comicsans", 20)
-LARGE_FONT = pygame.font.SysFont("comicsans", 72)
+LARGE_FONT = pygame.font.SysFont("comicsans", 50)
 
 class BasicEnemy:
     def __init__(self, x, y, speed):
@@ -153,8 +154,11 @@ def pause_menu():
     resume_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 87, 200, 50, "Resume", (0, 255, 0), (0, 200, 0), (0, 255, 0))
     restart_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 25, 200, 50, "Restart", (255, 255, 0), (200, 200, 0), (255, 255, 0))
     quit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 37, 200, 50, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
+    pause_text = LARGE_FONT.render("Paused", True, (255, 255, 255))
+    pause_text_rect = pause_text.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 175))
     buttons = [resume_button, restart_button, quit_button]
     pause = True
+    
 
     while pause:
         draw_game() 
@@ -162,21 +166,26 @@ def pause_menu():
         overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 150)) 
         Screen.blit(overlay, (0, 0))
+        Screen.blit(pause_text, pause_text_rect)
 
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+                
+            if event.type == pygame.MOUSEMOTION:
+                resume_button.is_over(pygame.mouse.get_pos())
+                restart_button.is_over(pygame.mouse.get_pos())
+                quit_button.is_over(pygame.mouse.get_pos())
+            
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                if resume_button.is_over(pos):
+                if resume_button.is_over(pygame.mouse.get_pos()):
                     pause = False
                     countdown_timer(3)
                     return 'resume'
-                elif restart_button.is_over(pos):
+                elif restart_button.is_over(pygame.mouse.get_pos()):
                     return 'restart'
-                elif quit_button.is_over(pos):
+                elif quit_button.is_over(pygame.mouse.get_pos()):
                     return 'quit'
 
         for button in buttons:
@@ -467,7 +476,7 @@ def menu():
     Screen.blit(MENU_BG, (0, 0))
 
     start_button = Button(300, 200, 200, 50, "Start", (0, 255, 0), (0, 200, 0), (0, 255, 0))
-    settings_button = Button(300, 275, 200, 50, "More", (0, 0, 255), (0, 0, 200), (0, 0, 255))
+    settings_button = Button(300, 275, 200, 50, "More", (0, 255, 255), (0, 200, 200), (0, 255, 255))
     quit_button = Button(300, 350, 200, 50, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
 
     font = pygame.font.SysFont("comicsans", 30)
@@ -484,9 +493,9 @@ def menu():
                 quit()
 
             if event.type == pygame.MOUSEMOTION:
-                for button in buttons:
-                    button.is_over(pygame.mouse.get_pos())
-                    button.color = button.hover_color
+                start_button.is_over(pygame.mouse.get_pos())
+                settings_button.is_over(pygame.mouse.get_pos())
+                quit_button.is_over(pygame.mouse.get_pos())
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for button in buttons:
@@ -519,15 +528,27 @@ selected_mode = easy_mode
 
 def difficulty_menu():
     global selected_mode
+    global DIFFICULTY_BG
+    Screen.blit(DIFFICULTY_BG, (0,0))
     easy_button = Button(300, 200, 200, 50, "Easy", (0, 255, 0), (0, 200, 0), (0, 255, 0))
     medium_button = Button(300, 275, 200, 50, "Medium", (255, 255, 0), (200, 200, 0), (255, 255, 0))
     hard_button = Button(300, 350, 200, 50, "Hard", (255, 0, 0), (200, 0, 0), (255, 0, 0))
     back_button = Button(300, 425, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
     buttons = [easy_button, medium_button, hard_button, back_button]
+    
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 150)) 
+    Screen.blit(overlay, (0, 0))
+    
+    font = pygame.font.SysFont("comicsans", 30)
+    message = font.render("Select Difficulty", True, (255, 255, 255))
+    message_rect = message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 5))
+    Screen.blit(message, message_rect)
+
+
 
     while True:
-        Screen.fill((0, 0, 0))
-
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -556,10 +577,6 @@ def difficulty_menu():
                             menu()
                             return
 
-        font = pygame.font.SysFont("comicsans", 30)
-        message = font.render("Select Difficulty", True, (255, 255, 255))
-        message_rect = message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 5))
-        Screen.blit(message, message_rect)
 
         for button in buttons:
             button.draw(Screen, (0, 0, 0))
@@ -602,11 +619,75 @@ def player_hit_message(message, duration):
     Screen.blit(text, text_rect)
     pygame.display.update()
     pygame.time.wait(duration * 1000)
+    
+def lives_remaining_message(message, duration):
+    font = pygame.font.SysFont("comicsans", 50)
+    text = font.render(message, True, (255,255,255))
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 75))
+    Screen.blit(text, text_rect)
+    pygame.display.update()
+    pygame.time.wait(duration * 1000)
 
 def reset_game():
     global enemies
+    global lives
+    player_lives = lives - 1
     player_hit_message("You have been hit!", 1)
+    lives_remaining_message(f"Lives remaining: {player_lives}", 1)
     enemies = []
+    
+def game_over_menu():
+    global lives
+    global score
+    global enemies
+    
+    game_over_font = pygame.font.SysFont('Arial', 48)
+    game_over_text = game_over_font.render("You ran out of lives! Game over", True, (255, 255, 255))
+    score_font = pygame.font.SysFont('Arial',48)
+    score_text = score_font.render(f"Score: {score}", True, (255, 255, 255,))
+    
+    restart_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 , 200, 50, "Restart", (255, 255, 0), (200, 200, 0), (255, 255, 0))
+    quit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 75, 200, 50, "Quit", (255, 0, 0), (200, 0, 0), (255, 0, 0))
+    buttons = [restart_button, quit_button]
+    
+    game_over = True
+    
+    game_over_text_rect = game_over_text.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 100))
+    score_text_rect = score_text.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+
+    while game_over:
+        draw_game()
+        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 75)) 
+        Screen.blit(overlay, (0, 0))
+        Screen.blit(game_over_text, game_over_text_rect)
+        Screen.blit(score_text, score_text_rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                
+            if event.type == pygame.MOUSEMOTION:
+                restart_button.is_over(pygame.mouse.get_pos())
+                quit_button.is_over(pygame.mouse.get_pos())    
+                
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if restart_button.is_over(pos):
+                    lives = 3 
+                    score = 0
+                    enemies = [] 
+                    main()
+                    return 'restart'
+                elif quit_button.is_over(pos):
+                    menu()
+                    return 'quit'
+
+        for button in buttons:
+            button.draw(Screen, (0, 0, 0))
+
+        pygame.display.update()
 
 def main():
     run = True
@@ -634,6 +715,8 @@ def main():
             if random.randint(1, selected_mode.spawn_rate) == 1:
                 for i in (-2, -1, 0):
                     enemies.append(create_snake_enemy(i * 25))
+                    
+        
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -649,7 +732,11 @@ def main():
                     if action == 'quit':
                         menu()
                     if action == 'restart':
+                        enemies = []
+                        score = 0
                         main()
+                        
+
                         return
                     elif action == 'resume':
                         pass
@@ -680,12 +767,9 @@ def main():
                 player = pygame.Rect((SCREEN_WIDTH - PLAYER_WIDTH) // 2, SCREEN_HEIGHT - PLAYER_HEIGHT - 75, PLAYER_WIDTH, PLAYER_HEIGHT)  # Start at center bottom
                 lives -= 1
                 if lives == 0:
-                    menu()
-                    lives = 3
-                    score = 0
-                    enemies.clear()
-                    bullets.clear()
-                    start_time = time.time()
+                    game_over_menu()
+                    
+                        
 
         for enemy in enemies:
             enemy.move()
