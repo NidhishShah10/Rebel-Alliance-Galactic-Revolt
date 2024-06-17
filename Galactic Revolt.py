@@ -3,19 +3,17 @@ import time
 import random
 import sys
 
-# Initialize Pygame
 pygame.font.init()
 pygame.init()
 
-# Default screen size and other constants
+# Default screen size 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-# Define your music file path
+
 MUSIC_FILE = "background_music.mp3"
 
-# Load background music
 pygame.mixer.music.load(MUSIC_FILE)
-# Play the background music with looping (-1 means loop indefinitely)
+# (-1 means loop indefinitely)
 pygame.mixer.music.play(-1)
 
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), (pygame.SRCALPHA))
