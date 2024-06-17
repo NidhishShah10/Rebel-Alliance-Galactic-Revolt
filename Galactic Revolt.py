@@ -3,17 +3,19 @@ import time
 import random
 import sys
 
+# Initialize Pygame
 pygame.font.init()
 pygame.init()
 
-# Default screen size 
+# Default screen size and other constants
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-
+# Define your music file path
 MUSIC_FILE = "background_music.mp3"
 
+# Load background music
 pygame.mixer.music.load(MUSIC_FILE)
-# (-1 means loop indefinitely)
+# Play the background music with looping (-1 means loop indefinitely)
 pygame.mixer.music.play(-1)
 
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), (pygame.SRCALPHA))
@@ -25,7 +27,7 @@ GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, 
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 SETTINGS_BG = pygame.transform.scale(pygame.image.load("Settings_background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 DIFFICULTY_BG = pygame.transform.scale(pygame.image.load("Difficulty_Background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
-PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (60, 60))
+PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (120, 60))
 PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
 
