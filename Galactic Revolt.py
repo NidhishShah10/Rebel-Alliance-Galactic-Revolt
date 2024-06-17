@@ -328,7 +328,7 @@ def game_controls_submenu():
         right_message = font.render("Right arrow - Move the player to the right", True, (255, 255, 255))
         left_message = font.render("Left arrow - Move the player to the left", True, (255, 255, 255))
         shoot_message = font.render("Space bar - Shoot bullets at the enemies", True, (255, 255, 255))
-        pause_message = font.render('"P" key - Pause the game', True, (255, 255, 255))
+        pause_message = font.render('"ESC" key - Pause the game', True, (255, 255, 255))
         
         up_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 125))
         down_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 75))
