@@ -22,6 +22,7 @@ pygame.mixer.music.play(-1)
 shoot_sound = pygame.mixer.Sound("shooting_noise.mp3")
 hit_sound = pygame.mixer.Sound("hit_noise.wav")
 bomb_sound = pygame.mixer.Sound("Explosion.mp3")
+player_hit_sound = pygame.mixer.Sound("player_hit.mp3")
 
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), (pygame.SRCALPHA))
 pygame.display.set_caption("Galactic Revolt")
@@ -822,6 +823,7 @@ def main():
             enemy.move()
             enemy.draw(Screen)
             if player.colliderect(enemy.rect):
+                player_hit_sound.play()
                 reset_game()
                 player = pygame.Rect((SCREEN_WIDTH - PLAYER_WIDTH) // 2, SCREEN_HEIGHT - PLAYER_HEIGHT - 75, PLAYER_WIDTH, PLAYER_HEIGHT)  # Start at center bottom
                 lives -= 1
