@@ -15,8 +15,9 @@ MUSIC_FILE = "background_music.mp3"
 
 # Load background music
 pygame.mixer.music.load(MUSIC_FILE)
-# Play the background music with looping (-1 means loop indefinitely)
+# Play the background music with looping (-1 means loop indefinitely)\
 pygame.mixer.music.play(-1)
+
 
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), (pygame.SRCALPHA))
 pygame.display.set_caption("Galactic Revolt")
@@ -27,7 +28,7 @@ GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, 
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 SETTINGS_BG = pygame.transform.scale(pygame.image.load("Settings_background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 DIFFICULTY_BG = pygame.transform.scale(pygame.image.load("Difficulty_Background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
-PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (120, 60))
+PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (60, 60))
 PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
 
@@ -38,6 +39,32 @@ BULLET_SPEED = 10
 
 FONT = pygame.font.SysFont("comicsans", 20)
 LARGE_FONT = pygame.font.SysFont("comicsans", 50)
+
+class bomb(pygame.sprite.Sprite):
+    def __init__(bomb, x, y, speed):
+        super().__init__()
+        bomb.x = x
+        bomb.y = y
+        bomb.speed = speed
+        bomb.image = pygame.transform.scale(pygame.image.load("Bomb.png"), (30, 30))
+        bomb.width = bomb.image.get_width()
+        bomb.height = bomb.image.get_height()
+        bomb.rect = pygame.Rect(bomb.x, bomb.y, bomb.width, bomb.height)
+        
+    def move(bomb):
+        bomb.y += bomb.speed
+        bomb.rect.y = bomb.y
+        
+    def draw(bomb, Screen):
+        Screen.blit(bomb.image, (bomb.x, bomb.y))
+        
+def create_bomb():
+    x = random.randint(0, SCREEN_WIDTH - 25)
+    y = -25
+    speed = random.randint(1,2)
+    return bomb(x, y, speed)
+    
+bombs = []
 
 class BasicEnemy:
     def __init__(self, x, y, speed):
@@ -139,10 +166,14 @@ class Button:
     
 def draw_game():
     global enemies
+    global bomb
     Screen.blit(GAME_BG, (0, 0))
  
     for enemy in enemies:
         enemy.draw(Screen)
+        
+    for bomb in bombs:
+        bomb.draw(Screen)
         
     # Display score
     score_text = FONT.render(f"Score: {score}", True, (255, 255, 255))
@@ -202,9 +233,6 @@ def pause_menu():
 
         pygame.display.update()
 
-
-
-        
 def settings_menu():
     global Screen, SETTINGS_BG
 
@@ -328,7 +356,7 @@ def game_controls_submenu():
         right_message = font.render("Right arrow - Move the player to the right", True, (255, 255, 255))
         left_message = font.render("Left arrow - Move the player to the left", True, (255, 255, 255))
         shoot_message = font.render("Space bar - Shoot bullets at the enemies", True, (255, 255, 255))
-        pause_message = font.render('"ESC" key - Pause the game', True, (255, 255, 255))
+        pause_message = font.render('"P" key - Pause the game', True, (255, 255, 255))
         
         up_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 125))
         down_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 75))
@@ -706,8 +734,10 @@ def main():
     global score
     global lives
     global enemies
+    global bombs
     lives = 3
     clock = pygame.time.Clock()  
+    bombs = pygame.sprite.Group()
     start_time = time.time()
     elapsed_time = 0
     time_for_snakes = False
@@ -725,8 +755,14 @@ def main():
                 for i in (-2, -1, 0):
                     enemies.append(create_snake_enemy(i * 25))
                     
+        if random.randint(1, 500) == 1:
+            new_bomb = create_bomb()
+            bombs.add(new_bomb)
+            
+            for bomb in bombs.sprites():
+                bomb.move()
+                bomb.draw(Screen)
         
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -768,6 +804,14 @@ def main():
         draw(player, bullets, elapsed_time)
         draw_score()
         # Check if player died
+        for bomb in bombs:
+            bomb.move()
+            bomb.draw(Screen)
+            if player.colliderect(bomb.rect):
+                enemies = []
+                bomb.remove(bombs)
+                score = score + 30
+                
         for enemy in enemies:
             enemy.move()
             enemy.draw(Screen)
@@ -783,6 +827,11 @@ def main():
         for enemy in enemies:
             enemy.move()
             enemy.draw(Screen)
+            
+        for bomb in bombs:
+            bomb.move()
+            bomb.draw(Screen)
+            
         # Display lives
         lives_text = FONT.render(f"Lives: {lives}", True, (255, 255, 255))
         Screen.blit(lives_text, (SCREEN_WIDTH - 200, 10))
