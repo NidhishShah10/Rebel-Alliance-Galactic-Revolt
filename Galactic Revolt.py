@@ -31,7 +31,7 @@ GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, 
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 SETTINGS_BG = pygame.transform.scale(pygame.image.load("Settings_background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 DIFFICULTY_BG = pygame.transform.scale(pygame.image.load("Difficulty_Background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
-PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (120, 60))
+PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (60, 60))
 PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
 
