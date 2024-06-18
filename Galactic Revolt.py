@@ -44,9 +44,8 @@ BULLET_SPEED = 10
 FONT = pygame.font.SysFont("comicsans", 20)
 LARGE_FONT = pygame.font.SysFont("comicsans", 50)
 
-class bomb(pygame.sprite.Sprite):
+class Bomb_Powerup():
     def __init__(self, x, y, speed):
-        super().__init__()
         self.x = x
         self.y = y
         self.speed = speed
@@ -55,18 +54,18 @@ class bomb(pygame.sprite.Sprite):
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         
-    def move(bomb):
-        bomb.y += bomb.speed
-        bomb.rect.y = bomb.y
+    def move(self):
+        self.y += self.speed
+        self.rect.y = self.y
         
-    def draw(bomb, Screen):
-        Screen.blit(bomb.image, (bomb.x, bomb.y))
+    def draw(self, screen):
+        screen.blit(self.image, (self.x, self.y))
         
 def create_bomb():
     x = random.randint(0, SCREEN_WIDTH - 25)
     y = -25
     speed = random.randint(1,2)
-    return bomb(x, y, speed)
+    return Bomb_Powerup(x, y, speed)
     
 bombs = []
 
@@ -136,6 +135,7 @@ def create_snake_enemy(_x : int):
     return SnakeEnemy(x, y, speed)
 
 enemies = []
+bombs = []
 
 class Button:
     def __init__(self, x, y, width, height, text, color, hover_color, original_color):
@@ -170,7 +170,7 @@ class Button:
     
 def draw_game():
     global enemies
-    global bomb
+    global bombs
     Screen.blit(GAME_BG, (0, 0))
  
     for enemy in enemies:
@@ -673,15 +673,18 @@ def lives_remaining_message(message, duration):
 def reset_game():
     global enemies
     global lives
+    global bombs
     player_lives = lives - 1
     player_hit_message("You have been hit!", 1)
     lives_remaining_message(f"Lives remaining: {player_lives}", 1)
     enemies = []
+    bombs = []
     
 def game_over_menu():
     global lives
     global score
     global enemies
+    global bombs
     
     game_over_font = pygame.font.SysFont('Arial', 48)
     game_over_text = game_over_font.render("You ran out of lives! Game over", True, (255, 255, 255))
@@ -720,6 +723,7 @@ def game_over_menu():
                     lives = 3 
                     score = 0
                     enemies = [] 
+                    bombs = []
                     main()
                     return 'restart'
                 elif quit_button.is_over(pos):
@@ -742,7 +746,6 @@ def main():
     global bombs
     lives = 3
     clock = pygame.time.Clock()  
-    bombs = pygame.sprite.Group()
     start_time = time.time()
     elapsed_time = 0
     time_for_snakes = False
@@ -761,12 +764,7 @@ def main():
                     enemies.append(create_snake_enemy(i * 25))
                     
         if random.randint(1, 500) == 1:
-            new_bomb = create_bomb()
-            bombs.add(new_bomb)
-            
-            for bomb in bombs.sprites():
-                bomb.move()
-                bomb.draw(Screen)
+            bombs.append(create_bomb())
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -809,13 +807,14 @@ def main():
         handle_bullets(bullets)
         draw(player, bullets, elapsed_time)
         draw_score()
+        
         # Check if player died
         for bomb in bombs:
             bomb.move()
             bomb.draw(Screen)
             if player.colliderect(bomb.rect):
                 enemies = []
-                bomb.remove(bombs)
+                bombs = []
                 score = score + 10
                 bomb_sound.play()
                 
