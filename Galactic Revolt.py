@@ -18,6 +18,9 @@ pygame.mixer.music.load(MUSIC_FILE)
 # Play the background music with looping (-1 means loop indefinitely)\
 pygame.mixer.music.play(-1)
 
+# Loading game sound effects
+shoot_sound = pygame.mixer.Sound("shooting_noise.mp3")
+hit_sound = pygame.mixer.Sound("hit_noise.wav")
 
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), (pygame.SRCALPHA))
 pygame.display.set_caption("Galactic Revolt")
@@ -434,7 +437,7 @@ def credits_submenu():
                     return
 
                 
-        back_button.draw(Screen, (0, 0, 0))
+        back_button.draw(Screen, (0, 0, 0)) 
 
         
         pygame.display.update()
@@ -646,6 +649,7 @@ def handle_bullets(bullets):
                 if pygame.Rect(bullet[0], bullet[1], BULLET_RADIUS, BULLET_RADIUS).colliderect(enemy.rect):
                     bullets.remove(bullet)
                     enemies.remove(enemy)
+                    hit_sound.play()
                     score += 1
                     break
 
@@ -771,6 +775,7 @@ def main():
                 if event.key == pygame.K_SPACE:
                     bullet = [player.x + player.width // 2, player.y]
                     bullets.append(bullet)
+                    shoot_sound.play()
 
                 if event.key == pygame.K_ESCAPE:
                     action = pause_menu()
