@@ -21,6 +21,7 @@ pygame.mixer.music.play(-1)
 # Loading game sound effects
 shoot_sound = pygame.mixer.Sound("shooting_noise.mp3")
 hit_sound = pygame.mixer.Sound("hit_noise.wav")
+bomb_sound = pygame.mixer.Sound("Explosion.mp3")
 
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), (pygame.SRCALPHA))
 pygame.display.set_caption("Galactic Revolt")
@@ -816,6 +817,7 @@ def main():
                 enemies = []
                 bomb.remove(bombs)
                 score = score + 10
+                bomb_sound.play()
                 
         for enemy in enemies:
             enemy.move()
