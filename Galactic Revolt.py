@@ -31,7 +31,7 @@ GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, 
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 SETTINGS_BG = pygame.transform.scale(pygame.image.load("Settings_background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 DIFFICULTY_BG = pygame.transform.scale(pygame.image.load("Difficulty_Background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
-PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (60, 60))
+PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (120, 60))
 PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
 
@@ -49,7 +49,7 @@ class bomb(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.speed = speed
-        self.image = pygame.transform.scale(pygame.image.load("Bomb.png"), (30, 30))
+        self.image = pygame.transform.scale(pygame.image.load("Bomb.png"), (40, 40))
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
@@ -359,7 +359,7 @@ def game_controls_submenu():
         right_message = font.render("Right arrow - Move the player to the right", True, (255, 255, 255))
         left_message = font.render("Left arrow - Move the player to the left", True, (255, 255, 255))
         shoot_message = font.render("Space bar - Shoot bullets at the enemies", True, (255, 255, 255))
-        pause_message = font.render('"P" key - Pause the game', True, (255, 255, 255))
+        pause_message = font.render('"ESC" key - Pause the game', True, (255, 255, 255))
         
         up_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 125))
         down_message_rect = up_message.get_rect(center=(SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 - 75))
