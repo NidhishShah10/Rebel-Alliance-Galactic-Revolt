@@ -14,6 +14,8 @@ Rebel Alliance: Galactic Revolt	is a thrilling space shooter that takes players 
 
 • Shooting: Use (space key) bullets to shoot and take down the enemy spaceships who are trying to attack you. 
 
+• Pause: While playing the game users can also pause the game in between by simply pressing ESC key.
+
 
 ## Development Team
 
