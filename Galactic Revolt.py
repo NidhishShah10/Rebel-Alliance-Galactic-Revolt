@@ -18,6 +18,8 @@ pygame.mixer.music.load(MUSIC_FILE)
 # Play the background music with looping (-1 means loop indefinitely)\
 pygame.mixer.music.play(-1)
 
+music_on = True
+
 # Loading game sound effects
 shoot_sound = pygame.mixer.Sound("shooting_noise.mp3")
 hit_sound = pygame.mixer.Sound("hit_noise.wav")
@@ -33,7 +35,7 @@ GAME_BG = pygame.transform.scale(pygame.image.load("Space.jpg"), (SCREEN_WIDTH, 
 MENU_BG = pygame.transform.scale(pygame.image.load("Menu.png"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 SETTINGS_BG = pygame.transform.scale(pygame.image.load("Settings_background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
 DIFFICULTY_BG = pygame.transform.scale(pygame.image.load("Difficulty_Background.jpg"), (SCREEN_WIDTH, SCREEN_HEIGHT))
-PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (60, 60))
+PLAYER_IMAGE = pygame.transform.scale(pygame.image.load("player_ship.png"), (120, 60))
 PLAYER_WIDTH = PLAYER_IMAGE.get_width()
 PLAYER_HEIGHT = PLAYER_IMAGE.get_height()
 
@@ -75,7 +77,7 @@ class BasicEnemy:
         self.x = x
         self.y = y
         self.speed = speed
-        self.image = pygame.transform.scale(pygame.image.load("BasicEnemy.png"), (25, 25))
+        self.image = pygame.transform.scale(pygame.image.load("BasicEnemy.png"), (40, 40))
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
@@ -562,21 +564,21 @@ class GameMode:
         self.name = name
         self.spawn_rate = spawn_rate
 
-easy_mode = GameMode("Easy", 120)
-medium_mode = GameMode("Medium", 80)
-hard_mode = GameMode("Hard", 40)
-game_modes = [easy_mode, medium_mode, hard_mode]
-selected_mode = easy_mode
+beginner_mode = GameMode("Beginner", 120)
+intermediate_mode = GameMode("Intermediate", 80)
+chaos_mode = GameMode("Chaos", 40)
+game_modes = [beginner_mode, intermediate_mode, chaos_mode]
+selected_mode = beginner_mode
 
 def difficulty_menu():
     global selected_mode
     global DIFFICULTY_BG
     Screen.blit(DIFFICULTY_BG, (0,0))
-    easy_button = Button(300, 200, 200, 50, "Easy", (0, 255, 0), (0, 200, 0), (0, 255, 0))
-    medium_button = Button(300, 275, 200, 50, "Medium", (255, 255, 0), (200, 200, 0), (255, 255, 0))
-    hard_button = Button(300, 350, 200, 50, "Hard", (255, 0, 0), (200, 0, 0), (255, 0, 0))
+    beginner_button = Button(300, 200, 200, 50, "Beginner", (0, 255, 0), (0, 200, 0), (0, 255, 0))
+    intermediate_button = Button(300, 275, 200, 50, "Intermediate", (255, 255, 0), (200, 200, 0), (255, 255, 0))
+    chaos_button = Button(300, 350, 200, 50, "Chaos", (255, 0, 0), (200, 0, 0), (255, 0, 0))
     back_button = Button(300, 425, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
-    buttons = [easy_button, medium_button, hard_button, back_button]
+    buttons = [beginner_button, intermediate_button, chaos_button, back_button]
     
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 150)) 
@@ -603,16 +605,16 @@ def difficulty_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for button in buttons:
                     if button.is_over(pygame.mouse.get_pos()):
-                        if button.text == "Easy":
-                            selected_mode = easy_mode
+                        if button.text == "Beginner":
+                            selected_mode = beginner_mode
                             main()
                             return
-                        elif button.text == "Medium":
-                            selected_mode = medium_mode
+                        elif button.text == "Intermediate":
+                            selected_mode =intermediate_mode
                             main()
                             return
-                        elif button.text == "Hard":
-                            selected_mode = hard_mode
+                        elif button.text == "Chaos":
+                            selected_mode = chaos_mode
                             main()
                             return
                         elif button.text == "Back":
