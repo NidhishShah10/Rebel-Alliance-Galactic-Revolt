@@ -21,10 +21,10 @@ pygame.mixer.music.play(-1)
 music_on = True
 
 # Loading game sound effects
-shoot_sound = pygame.mixer.Sound("shooting_noise.mp3")
+shoot_sound = pygame.mixer.Sound("laser1.wav")
 hit_sound = pygame.mixer.Sound("hit_noise.wav")
 bomb_sound = pygame.mixer.Sound("Explosion.mp3")
-player_hit_sound = pygame.mixer.Sound("player_hit.mp3")
+player_hit_sound = pygame.mixer.Sound("explosion.wav")
 
 Screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), (pygame.SRCALPHA))
 pygame.display.set_caption("Galactic Revolt")
