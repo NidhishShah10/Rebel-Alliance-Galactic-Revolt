@@ -487,12 +487,13 @@ def about_submenu():
     back_button = Button(50, 50, 200, 50, "Back", (255, 165, 0), (200, 130, 0), (255, 165, 0))
     
     font = pygame.font.SysFont("Comicsans", 20)
-    about_message = ("Rebel Alliance: Galactic Revolt is a thrilling space shooter that takes players back to "
-                     "the golden era of arcade games. Engage in intense space battles, dodge incoming fire, "
-                     "and take down enemy ships to save the galaxy. This game, takes its design inspiration"
-                     "from old-school videogames like Galaga and it delivers a nostalgic yet fresh experience"
-                     "In this game while facing waves of increasingly difficult and proficient competitors,"
-                     "players can gather power-ups to strengthen their weaponry and defenses.")
+    about_message = ("Rebel Alliance: Galactic Revolt takes players to a thrillers space shooter experience that brings "
+                     "back nostalgia of classic arcade games. Dive into epic space battles and use your skillful movement through enemy fire "
+                     "and destroy all the rival ships to defend the galaxy. This game, takes its design inspiration "
+                     "from old-school videogames like Galaga and it delivers a nostalgic yet fresh experience. "
+                     "In this game while facing waves of increasingly difficult and proficient rivals, "
+                     "at once players can get 3 chances/lives to gain high score by defeating enemy ships. "
+                     "Also players can gather power-ups to gain extra points, which will help them to create a high score each game.")
 
     while True:
         Screen.blit(SETTINGS_BG, (0, 0))
